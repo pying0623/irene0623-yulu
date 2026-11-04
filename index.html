@@ -24,7 +24,10 @@ h1{font-size:15px;font-weight:500;color:var(--muted);letter-spacing:.2em;margin:
 .pills button{border:1px solid var(--line);background:transparent;color:var(--text);padding:8px 14px;border-radius:999px;font-size:14px;cursor:pointer;font-family:inherit}
 .pills button[aria-pressed="true"]{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:36px 26px;min-height:220px;display:flex;flex-direction:column;justify-content:center}
-.quote{font-family:"Songti SC","Noto Serif SC","Source Han Serif SC",serif;font-size:23px;line-height:1.7;margin:0;transition:opacity .25s}
+.quote{font-family:"Songti SC","Noto Serif SC","Source Han Serif SC",serif;font-size:21px;line-height:1.75;margin:0;transition:opacity .25s;line-break:strict}
+.quote span{display:inline-block;max-width:100%}
+.music{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:12px;z-index:5;border:1px solid var(--line);background:var(--card);color:var(--text);padding:8px 14px;border-radius:999px;font-size:14px;cursor:pointer;font-family:inherit}
+.music[aria-pressed="true"]{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
 .quote.fade{opacity:0}
 .sign{margin-top:22px;color:var(--muted);font-size:14px}
 .again{margin-top:22px;width:100%;border:0;background:var(--accent);color:var(--accent-text);padding:15px;border-radius:14px;font-size:16px;cursor:pointer;font-family:inherit}
@@ -36,6 +39,8 @@ h1{font-size:15px;font-weight:500;color:var(--muted);letter-spacing:.2em;margin:
 </style>
 </head>
 <body>
+<button class="music" id="music" aria-pressed="false">🎵 轻音乐</button>
+<audio id="bgm" src="bgm.mp3" loop preload="none"></audio>
 <main>
   <h1>老师想对你说</h1>
   <div class="pills" id="pills"></div>
@@ -101,6 +106,30 @@ var q = document.getElementById("quote");
 var pills = document.getElementById("pills");
 var sticker = document.getElementById("sticker");
 var hint = document.getElementById("hint");
+var bgm = document.getElementById("bgm");
+var musicBtn = document.getElementById("music");
+bgm.volume = 0.4;
+musicBtn.addEventListener("click", function(){
+  if (bgm.paused) {
+    var pr = bgm.play();
+    if (pr && pr.catch) { pr.catch(function(){}); }
+    musicBtn.setAttribute("aria-pressed", "true");
+    musicBtn.textContent = "⏸ 轻音乐";
+  } else {
+    bgm.pause();
+    musicBtn.setAttribute("aria-pressed", "false");
+    musicBtn.textContent = "🎵 轻音乐";
+  }
+});
+function renderQuote(text){
+  q.textContent = "";
+  var parts = text.match(/[^，；。！？]+[，；。！？]?/g) || [text];
+  parts.forEach(function(c){
+    var sp = document.createElement("span");
+    sp.textContent = c;
+    q.appendChild(sp);
+  });
+}
 sticker.addEventListener("click", function(){ sticker.muted = !sticker.muted; });
 
 function shuffle(a){
@@ -122,7 +151,7 @@ function nextQuote(){
     sticker.classList.remove("show"); hint.style.display = "none"; sticker.pause();
     q.style.display = "block";
     q.classList.add("fade");
-    setTimeout(function(){ q.textContent = s; q.classList.remove("fade"); }, 180);
+    setTimeout(function(){ renderQuote(s); q.classList.remove("fade"); }, 180);
   } else {
     q.style.display = "none";
     sticker.src = s.video; sticker.muted = true;
