@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Irene老师的鼓励语录</title>
+<style>
+:root{
+  --bg:#faf6ee; --card:#ffffff; --text:#2b2620; --muted:#7a7064; --accent:#b8412f; --accent-text:#ffffff; --line:#e6dccb;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#1c1814; --card:#272119; --text:#f1e9dc; --muted:#a89c8b; --accent:#e0735f; --accent-text:#1c1814; --line:#3b3329;}
+}
+:root[data-theme="dark"]{--bg:#1c1814; --card:#272119; --text:#f1e9dc; --muted:#a89c8b; --accent:#e0735f; --accent-text:#1c1814; --line:#3b3329;}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;display:flex;align-items:center;justify-content:center;padding:20px}
+main{width:100%;max-width:440px;text-align:center}
+h1{font-size:15px;font-weight:500;color:var(--muted);letter-spacing:.2em;margin:0 0 18px}
+.pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:20px}
+.pills button{border:1px solid var(--line);background:transparent;color:var(--text);padding:8px 14px;border-radius:999px;font-size:14px;cursor:pointer;font-family:inherit}
+.pills button[aria-pressed="true"]{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:36px 26px;min-height:220px;display:flex;flex-direction:column;justify-content:center}
+.quote{font-family:"Songti SC","Noto Serif SC","Source Han Serif SC",serif;font-size:23px;line-height:1.7;margin:0;transition:opacity .25s}
+.quote.fade{opacity:0}
+.sign{margin-top:22px;color:var(--muted);font-size:14px}
+.again{margin-top:22px;width:100%;border:0;background:var(--accent);color:var(--accent-text);padding:15px;border-radius:14px;font-size:16px;cursor:pointer;font-family:inherit}
+.sticker{display:none;width:100%;max-width:300px;margin:0 auto;border-radius:14px;cursor:pointer}
+.sticker.show{display:block}
+.hint{display:none;margin-top:10px;font-size:12px;color:var(--muted)}
+.song{display:block;margin-top:12px;width:100%;border:1.5px solid var(--accent);color:var(--accent);background:transparent;padding:14px;border-radius:14px;font-size:16px;text-decoration:none;font-family:inherit}
+.foot{margin-top:16px;font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+  <h1>老师想对你说</h1>
+  <div class="pills" id="pills"></div>
+  <div class="card">
+    <video id="sticker" class="sticker" muted loop playsinline autoplay></video>
+    <div class="hint" id="hint">点一下贴图，可以开关声音</div>
+    <p class="quote" id="quote" aria-live="polite"></p>
+    <div class="sign">— Irene老师</div>
+  </div>
+  <button class="again" id="again">再来一句</button>
+  <a class="song" href="https://youtu.be/gCQuEakOEFo?t=88" target="_blank" rel="noopener noreferrer">🎵 Irene老师想送你的一首歌</a>
+  <div class="foot">简单的事，重复做，坚持做。</div>
+</main>
+<script>
+var DATA = {
+ "全部": [],
+ "考试前": [
+  "考试不是为了证明你有多厉害，而是让你看见自己努力的成果。",
+  "别让一时的紧张，掩盖了你长期以来的努力。",
+  "成绩或许不能决定你的未来，但你的态度可以改变未来。",
+  "不会的题目不可怕，不会却假装会，才可怕。",
+  "努力不一定每次都有惊喜，但每一次努力都不会白费。",
+  "你可以紧张，但不要怀疑自己；你可以害怕，但不要轻易放弃。",
+  "不要因为一道题不会做，就忘了自己已经学会了多少。"
+ ],
+ "情绪低落": [
+  "你可以有不开心的一天，但不要因此否定一直在努力的自己。",
+  "你不必时时刻刻都很坚强，累了就休息，调整好心情再出发。",
+  "生活不会每天都是晴天，但请记得，乌云不会永远停留。",
+  "别总是拿自己和别人比较，每个人都有自己的节奏和花期。",
+  "即使现在的你还不够优秀，也不代表未来的你不能闪闪发光。"
+ ],
+ "想放弃时": [
+  "不是看见了希望才坚持，而是坚持了才看见希望。",
+  "简单的事，重复做，坚持做。",
+  "进步是没有声音的，但有一天你回头，会发现自己已经走了很远。",
+  "不要跟别人比，跟昨天的自己比。",
+  "暂时走得慢一点没关系，只要你没有放弃前进，就已经很棒了。",
+  "不要因为现在看不到成果，就否定过去所有的努力。成长有时候需要一点时间。",
+  "困难不会因为你逃避而消失，但你可以透过一次次尝试，让自己变得越来越强大。",
+  "真正的进步，不是从来没有跌倒，而是每一次遇到困难，都愿意重新开始。"
+ ],
+ "每天加油": [
+  "新的一天，新的机会。昨天做得不够好没关系，今天继续努力！",
+  "好习惯，就是给自己订规则，然后真的去做。",
+  "不要小看每天的坚持，今天的努力，都会成为明天的底气。",
+  "把今天过好，把眼前的事做好，未来自然会慢慢变好。",
+  "遇到困难别退缩，遇到挑战别害怕，每一次尝试都是成长。",
+  "带着自信开始，带着勇气前进，即使步伐很小，也是在向前走。"
+ ]
+};
+DATA["Irene老师"] = [
+ {video: "sticker1.mp4"},
+ {video: "sticker2.mp4"},
+ {video: "sticker3.mp4"},
+ {video: "sticker4.mp4"}
+];
+var cats = ["全部","考试前","情绪低落","想放弃时","每天加油","Irene老师"];
+DATA["全部"] = [].concat(DATA["考试前"],DATA["情绪低落"],DATA["想放弃时"],DATA["每天加油"],DATA["Irene老师"]);
+cats = cats.filter(function(c){ return DATA[c].length > 0; });
+var current = "全部", deck = [], last = "";
+var q = document.getElementById("quote");
+var pills = document.getElementById("pills");
+var sticker = document.getElementById("sticker");
+var hint = document.getElementById("hint");
+sticker.addEventListener("click", function(){ sticker.muted = !sticker.muted; });
+
+function shuffle(a){
+  a = a.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
+function nextQuote(){
+  if (deck.length === 0) {
+    deck = shuffle(DATA[current]);
+    if (deck.length > 1 && deck[deck.length - 1] === last) { deck.unshift(deck.pop()); }
+  }
+  var s = deck.pop();
+  last = s;
+  if (typeof s === "string") {
+    sticker.classList.remove("show"); hint.style.display = "none"; sticker.pause();
+    q.style.display = "block";
+    q.classList.add("fade");
+    setTimeout(function(){ q.textContent = s; q.classList.remove("fade"); }, 180);
+  } else {
+    q.style.display = "none";
+    sticker.src = s.video; sticker.muted = true;
+    sticker.classList.add("show"); hint.style.display = "block";
+    var pr = sticker.play(); if (pr && pr.catch) { pr.catch(function(){}); }
+  }
+}
+function setCat(c){
+  current = c; deck = [];
+  var b = pills.children;
+  for (var i = 0; i < b.length; i++) { b[i].setAttribute("aria-pressed", b[i].textContent === c ? "true" : "false"); }
+  nextQuote();
+}
+cats.forEach(function(c){
+  var b = document.createElement("button");
+  b.textContent = c;
+  b.setAttribute("aria-pressed", "false");
+  b.addEventListener("click", function(){ setCat(c); });
+  pills.appendChild(b);
+});
+document.getElementById("again").addEventListener("click", nextQuote);
+setCat("全部");
+</script>
+</body>
+</html>
